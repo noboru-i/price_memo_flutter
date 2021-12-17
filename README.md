@@ -9,5 +9,5 @@ A new Flutter project.
 dev
 
 ```
-flutterfire configure --project price-memo-dev --ios-bundle-id hm.orz.chaos114.priceMemo
+flutterfire configure --project price-memo-dev --ios-bundle-id hm.orz.chaos114.priceMemo --out lib/gen/firebase_options.dart
 ```
