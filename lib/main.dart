@@ -1,84 +1,43 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:beamer/beamer.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterfire_ui/auth.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:price_memo/beamer_locations.dart';
 import 'package:price_memo/gen/firebase_options.dart';
+import 'package:price_memo/providers/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends HookConsumerWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      home: const AuthGate(),
-    );
-  }
-}
-
-class AuthGate extends StatelessWidget {
-  const AuthGate({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snapshot) {
-        // User is not signed in
-        if (!snapshot.hasData) {
-          return const SignInScreen(
-            providerConfigs: [
-              EmailProviderConfiguration(),
-            ],
-          );
-        }
-
-        // Render your application if authenticated
-        return const MyHomePage(title: 'Flutter Demo Home Page');
-      },
-    );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'email: ${FirebaseAuth.instance.currentUser?.email}',
-            ),
-            ElevatedButton(
-              onPressed: () {
-                FirebaseAuth.instance.signOut();
-              },
-              child: const Text("Logout"),
-            ),
-          ],
+  Widget build(BuildContext context, WidgetRef ref) {
+    /// this is required so the `BeamGuard` checks can be rechecked on
+    /// auth state changes
+    var value = ref.watch(authUserProvider.originProvider);
+    return value.when(
+      data: (_) => BeamerProvider(
+        routerDelegate: routerDelegate,
+        child: MaterialApp.router(
+          debugShowCheckedModeBanner: true,
+          routeInformationParser: BeamerParser(),
+          routerDelegate: routerDelegate,
         ),
       ),
+      error: (_, __) => Container(),
+      loading: () => Container(), // TODO: show loading
     );
   }
 }
