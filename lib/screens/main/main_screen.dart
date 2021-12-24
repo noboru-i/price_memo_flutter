@@ -1,11 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:price_memo/providers/provider.dart';
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends HookConsumerWidget {
   const MainScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    var user = ref.watch(authProvider).currentUser;
     return Scaffold(
       appBar: AppBar(
         title: const Text('title'),
@@ -15,7 +18,7 @@ class MainScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'email: ${FirebaseAuth.instance.currentUser?.email}',
+              'email: ${user?.email}',
             ),
             ElevatedButton(
               onPressed: () {
