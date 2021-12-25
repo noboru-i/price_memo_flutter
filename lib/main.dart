@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:price_memo/beamer_locations.dart';
+import 'package:price_memo/components/loading.dart';
 import 'package:price_memo/gen/firebase_options.dart';
 import 'package:price_memo/providers/provider.dart';
 
@@ -27,6 +28,7 @@ class MyApp extends HookConsumerWidget {
     /// this is required so the `BeamGuard` checks can be rechecked on
     /// auth state changes
     var value = ref.watch(authUserProvider.originProvider);
+
     return value.when(
       data: (_) => BeamerProvider(
         routerDelegate: routerDelegate,
@@ -37,7 +39,7 @@ class MyApp extends HookConsumerWidget {
         ),
       ),
       error: (_, __) => Container(),
-      loading: () => Container(), // TODO: show loading
+      loading: () => const MyLoading(),
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:cloud_firestore_odm/cloud_firestore_odm.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:price_memo/components/loading.dart';
 import 'package:price_memo/models/product.model.dart';
 import 'package:price_memo/providers/provider.dart';
 
@@ -74,7 +75,7 @@ class _List extends StatelessWidget {
         }
 
         if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
+          return const MyLoading();
         }
 
         final data = snapshot.requireData;
@@ -82,16 +83,9 @@ class _List extends StatelessWidget {
         return ListView.builder(
           itemCount: data.docs.length,
           itemBuilder: (context, index) {
-            return GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              // onTap: () => Navigator.pushNamed(
-              //   context,
-              //   '/movies/${data.docs[index].id}',
-              // ),
-              child: _ListItem(
-                data.docs[index].data,
-                data.docs[index].reference,
-              ),
+            return _ListItem(
+              data.docs[index].data,
+              data.docs[index].reference,
             );
           },
         );
@@ -110,7 +104,8 @@ class _ListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(product.name),
-      subtitle: Text('price: ${product.latestPrice}'),
+      subtitle: Text('latest price: ${product.latestPrice}'),
+      onTap: () => {},
     );
   }
 }
