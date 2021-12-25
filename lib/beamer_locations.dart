@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:price_memo/providers/provider.dart';
 import 'package:price_memo/screens/login/login_screen.dart';
 import 'package:price_memo/screens/main/main_screen.dart';
+import 'package:price_memo/screens/product_detail/product_detail_screen.dart';
 
 final routerDelegate = BeamerDelegate(
   guards: [
@@ -30,6 +31,10 @@ final routerDelegate = BeamerDelegate(
     routes: {
       '/': (_, __, ___) => const MainScreen(),
       '/login': (context, state, data) => const LoginScreen(),
+      '/products/:productId': (_, state, ___) {
+        var productId = state.pathParameters['productId'];
+        return ProductDetailScreen(productId);
+      },
     },
   ),
   initialPath: '/',

@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:beamer/beamer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_firestore_odm/cloud_firestore_odm.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -30,7 +31,7 @@ class MainScreen extends HookConsumerWidget {
     var user = ref.watch(authProvider).currentUser;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('title'),
+        title: const Text('product list'),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -105,7 +106,7 @@ class _ListItem extends StatelessWidget {
     return ListTile(
       title: Text(product.name),
       subtitle: Text('latest price: ${product.latestPrice}'),
-      onTap: () => {},
+      onTap: () => context.beamToNamed('/products/${reference.id}'),
     );
   }
 }
