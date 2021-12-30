@@ -24,15 +24,19 @@ final routerDelegate = BeamerDelegate(
         final container = ProviderScope.containerOf(context, listen: false);
         return container.read(authProvider).currentUser == null;
       },
-      beamToNamed: (_, __) => '/',
+      beamToNamed: (_, __) => '/products',
     ),
   ],
   locationBuilder: RoutesLocationBuilder(
     routes: {
-      '/': (_, __, ___) => const MainScreen(),
       '/login': (context, state, data) => const LoginScreen(),
+      '/products': (_, __, ___) => const MainScreen(),
       '/products/:productId': (_, state, ___) {
         var productId = state.pathParameters['productId'];
+        if (productId == null) {
+          // TODO handle error
+          throw Error();
+        }
         return ProductDetailScreen(productId);
       },
     },

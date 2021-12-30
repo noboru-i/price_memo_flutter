@@ -1,69 +1,90 @@
-import 'package:beamer/beamer.dart';
-import 'package:cloud_firestore_odm/cloud_firestore_odm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:price_memo/components/image_view.dart';
+import 'package:price_memo/components/loading.dart';
 import 'package:price_memo/models/product.model.dart';
+import 'package:price_memo/screens/product_detail/product_detail_notifier.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   const ProductDetailScreen(this.productId, {Key? key}) : super(key: key);
 
-  final String? productId;
+  final String productId;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('product detail'),
-        leading: BackButton(
-          // TODO: we must change URLs to use `maybePop`(default).
-          onPressed: () => Beamer.of(context).beamBack(),
-        ),
       ),
       body: _Body(productId),
     );
   }
 }
 
-class _Body extends StatelessWidget {
+class _Body extends HookConsumerWidget {
   const _Body(this.productId, {Key? key}) : super(key: key);
 
-  final String? productId;
+  final String productId;
 
   @override
-  Widget build(BuildContext context) {
-    return FirestoreBuilder<ProductDocumentSnapshot>(
-      ref: productsRef.doc(productId),
-      builder: (context, asyncSnapshot, _) {
-        if (asyncSnapshot.hasError) return const Text('error');
-        if (!asyncSnapshot.hasData) return const Text('loading');
-
-        final snapshot = asyncSnapshot.data!;
-        final product = snapshot.data;
-        final reference = snapshot.reference;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(notifier(productId));
+    final snapshot = state.snapshot;
+    if (snapshot == null) {
+      return const MyLoading();
+    }
+    return snapshot.when(
+      data: (ProductDocumentSnapshot data) {
+        final product = data.data;
+        final reference = data.reference;
         if (product == null) {
           return const Text('error');
         }
 
-        return _DetailEditor(product, reference);
+        return _DetailEditor(productId, product, reference);
+      },
+      error: (Object error, StackTrace? stackTrace) {
+        return const Text('error');
+      },
+      loading: () {
+        return const MyLoading();
       },
     );
   }
 }
 
 class _DetailEditor extends HookConsumerWidget {
-  _DetailEditor(this.product, this.reference, {Key? key}) : super(key: key);
+  _DetailEditor(
+    this.productId,
+    this.product,
+    this.reference, {
+    Key? key,
+  }) : super(key: key);
 
+  final String productId;
   final Product product;
   final ProductDocumentReference reference;
 
   final _formKey = GlobalKey<FormState>();
+
+  Future<void> _pickImage(WidgetRef ref) async {
+    final file = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (file == null) {
+      return;
+    }
+
+    ref.read(notifier(productId).notifier).setFile(file);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final productNameController = useTextEditingController(text: product.name);
     final latestPriceController =
         useTextEditingController(text: '${product.latestPrice}');
+    final state = ref.watch(notifier(productId));
+    final _notifier = ref.watch(notifier(productId).notifier);
 
     return Form(
       key: _formKey,
@@ -105,23 +126,34 @@ class _DetailEditor extends HookConsumerWidget {
               },
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(children: [
+              SizedBox(
+                width: 120,
+                height: 120,
+                child: ImageView(state.file),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => _pickImage(ref),
+                  child: const Text('Upload image'),
+                ),
+              ),
+            ]),
+          ),
           const SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
-              onPressed: () async {
-                if (_formKey.currentState?.validate() != true) {
-                  // has error.
-                  return;
-                }
-                await reference.update(
-                  name: productNameController.text,
-                  latestPrice: int.parse(latestPriceController.text),
-                );
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('Saved!'),
-                ));
-              },
+              onPressed: () => _notifier.save(
+                context,
+                ref.read,
+                formKey: _formKey,
+                name: productNameController.text,
+                latestPriceString: latestPriceController.text,
+              ),
               child: const Text('Save'),
             ),
           ),

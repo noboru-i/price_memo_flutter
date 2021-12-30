@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:beamer/beamer.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_firestore_odm/cloud_firestore_odm.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -13,11 +12,11 @@ import 'package:price_memo/providers/provider.dart';
 class MainScreen extends HookConsumerWidget {
   const MainScreen({Key? key}) : super(key: key);
 
-  Future<void> _addProduct() async {
+  Future<void> _addProduct(WidgetRef ref) async {
     var random = Random();
 
     // TODO: now, generating dummy date.
-    var reference = ProductCollectionReference(FirebaseFirestore.instance);
+    var reference = ProductCollectionReference(ref.read(firestoreProvider));
     reference.add(
       Product(
         name: 'sample ' + random.nextInt(100).toString(),
@@ -52,7 +51,7 @@ class MainScreen extends HookConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _addProduct();
+          _addProduct(ref);
         },
         backgroundColor: Colors.green,
         child: const Icon(Icons.add),
