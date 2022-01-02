@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,7 +10,7 @@ import 'package:price_memo/screens/product_detail/product_detail_model.dart';
 
 class ProductDetailNotifier extends StateNotifier<ProductDetailModel> {
   ProductDetailNotifier(this.productId, this._ref)
-      : _storageRepository = StorageRepository(_ref.read),
+      : _storageRepository = _ref.read(storageRepositoryProvider),
         super(ProductDetailModel(productId: productId)) {
     _fetch();
   }
@@ -22,6 +24,14 @@ class ProductDetailNotifier extends StateNotifier<ProductDetailModel> {
     state = state.copyWith(
       snapshot: snapshot,
     );
+
+    final imagePath = snapshot.asData?.value.data?.imagePath;
+    if (imagePath != null) {
+      final imageSnapshot = _ref.watch(_fetchImageProvider(imagePath));
+      state = state.copyWith(
+        imageData: imageSnapshot,
+      );
+    }
   }
 
   void setFile(XFile file) {
@@ -44,10 +54,11 @@ class ProductDetailNotifier extends StateNotifier<ProductDetailModel> {
       return;
     }
 
-    await _uploadImage(reader);
+    final takeSnapshot = await _uploadImage(reader);
     await data.reference.update(
       name: name,
       latestPrice: int.parse(latestPriceString),
+      imagePath: takeSnapshot?.ref.fullPath,
     );
 
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -74,4 +85,10 @@ final notifier = StateNotifierProvider.autoDispose
 final _fetchProvider = FutureProvider.autoDispose
     .family<ProductDocumentSnapshot, String>((ref, productId) async {
   return productsRef.doc(productId).get();
+});
+
+final _fetchImageProvider =
+    FutureProvider.autoDispose.family<Uint8List?, String>((ref, url) async {
+  final storageRepository = ref.read(storageRepositoryProvider);
+  return storageRepository.downloadImage(url);
 });

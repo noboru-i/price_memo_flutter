@@ -132,7 +132,7 @@ class _DetailEditor extends HookConsumerWidget {
               SizedBox(
                 width: 120,
                 height: 120,
-                child: ImageView(state.file),
+                child: ImageView(state.file, state.imageData),
               ),
               const SizedBox(width: 8),
               Expanded(

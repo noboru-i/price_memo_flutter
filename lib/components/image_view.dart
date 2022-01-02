@@ -1,16 +1,19 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:price_memo/components/loading.dart';
 
 class ImageView extends StatelessWidget {
   const ImageView(
-    this.file, {
+    this.file,
+    this.imageData, {
     Key? key,
   }) : super(key: key);
 
   final XFile? file;
+  final AsyncValue<Uint8List?>? imageData;
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +27,14 @@ class ImageView extends StatelessWidget {
           }
           return Image.memory(snapshot.data!);
         },
+      );
+    }
+    final localImageData = imageData;
+    if (localImageData != null) {
+      return localImageData.when(
+        data: (data) => data != null ? Image.memory(data) : const Text('error'),
+        error: (_, __) => const Text('error'),
+        loading: () => const MyLoading(),
       );
     }
 

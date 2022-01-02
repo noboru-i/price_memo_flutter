@@ -6,6 +6,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:price_memo/providers/provider.dart';
 import 'package:image/image.dart';
 
+final storageRepositoryProvider =
+    Provider((ref) => StorageRepository(ref.read));
+
 class StorageRepository {
   StorageRepository(this._reader);
 
@@ -32,8 +35,14 @@ class StorageRepository {
       return task;
     } catch (e) {
       // TODO error check
+      print('error in uploadImage');
+      print(e);
       rethrow;
     }
+  }
+
+  Future<Uint8List?> downloadImage(String url) async {
+    return _reader(storageProvider).ref(url).getData();
   }
 
   void cancelCurrentTask() {

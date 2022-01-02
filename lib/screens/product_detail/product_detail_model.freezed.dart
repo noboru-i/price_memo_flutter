@@ -20,11 +20,13 @@ class _$ProductDetailModelTearOff {
   _ProductDetailModel call(
       {required String productId,
       AsyncValue<ProductDocumentSnapshot>? snapshot,
-      XFile? file}) {
+      XFile? file,
+      AsyncValue<Uint8List?>? imageData}) {
     return _ProductDetailModel(
       productId: productId,
       snapshot: snapshot,
       file: file,
+      imageData: imageData,
     );
   }
 }
@@ -38,6 +40,7 @@ mixin _$ProductDetailModel {
   AsyncValue<ProductDocumentSnapshot>? get snapshot =>
       throw _privateConstructorUsedError;
   XFile? get file => throw _privateConstructorUsedError;
+  AsyncValue<Uint8List?>? get imageData => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $ProductDetailModelCopyWith<ProductDetailModel> get copyWith =>
@@ -52,7 +55,8 @@ abstract class $ProductDetailModelCopyWith<$Res> {
   $Res call(
       {String productId,
       AsyncValue<ProductDocumentSnapshot>? snapshot,
-      XFile? file});
+      XFile? file,
+      AsyncValue<Uint8List?>? imageData});
 }
 
 /// @nodoc
@@ -69,6 +73,7 @@ class _$ProductDetailModelCopyWithImpl<$Res>
     Object? productId = freezed,
     Object? snapshot = freezed,
     Object? file = freezed,
+    Object? imageData = freezed,
   }) {
     return _then(_value.copyWith(
       productId: productId == freezed
@@ -83,6 +88,10 @@ class _$ProductDetailModelCopyWithImpl<$Res>
           ? _value.file
           : file // ignore: cast_nullable_to_non_nullable
               as XFile?,
+      imageData: imageData == freezed
+          ? _value.imageData
+          : imageData // ignore: cast_nullable_to_non_nullable
+              as AsyncValue<Uint8List?>?,
     ));
   }
 }
@@ -97,7 +106,8 @@ abstract class _$ProductDetailModelCopyWith<$Res>
   $Res call(
       {String productId,
       AsyncValue<ProductDocumentSnapshot>? snapshot,
-      XFile? file});
+      XFile? file,
+      AsyncValue<Uint8List?>? imageData});
 }
 
 /// @nodoc
@@ -116,6 +126,7 @@ class __$ProductDetailModelCopyWithImpl<$Res>
     Object? productId = freezed,
     Object? snapshot = freezed,
     Object? file = freezed,
+    Object? imageData = freezed,
   }) {
     return _then(_ProductDetailModel(
       productId: productId == freezed
@@ -130,6 +141,10 @@ class __$ProductDetailModelCopyWithImpl<$Res>
           ? _value.file
           : file // ignore: cast_nullable_to_non_nullable
               as XFile?,
+      imageData: imageData == freezed
+          ? _value.imageData
+          : imageData // ignore: cast_nullable_to_non_nullable
+              as AsyncValue<Uint8List?>?,
     ));
   }
 }
@@ -137,7 +152,8 @@ class __$ProductDetailModelCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_ProductDetailModel implements _ProductDetailModel {
-  _$_ProductDetailModel({required this.productId, this.snapshot, this.file});
+  _$_ProductDetailModel(
+      {required this.productId, this.snapshot, this.file, this.imageData});
 
   @override
   final String productId;
@@ -145,10 +161,12 @@ class _$_ProductDetailModel implements _ProductDetailModel {
   final AsyncValue<ProductDocumentSnapshot>? snapshot;
   @override
   final XFile? file;
+  @override
+  final AsyncValue<Uint8List?>? imageData;
 
   @override
   String toString() {
-    return 'ProductDetailModel(productId: $productId, snapshot: $snapshot, file: $file)';
+    return 'ProductDetailModel(productId: $productId, snapshot: $snapshot, file: $file, imageData: $imageData)';
   }
 
   @override
@@ -158,7 +176,8 @@ class _$_ProductDetailModel implements _ProductDetailModel {
             other is _ProductDetailModel &&
             const DeepCollectionEquality().equals(other.productId, productId) &&
             const DeepCollectionEquality().equals(other.snapshot, snapshot) &&
-            const DeepCollectionEquality().equals(other.file, file));
+            const DeepCollectionEquality().equals(other.file, file) &&
+            const DeepCollectionEquality().equals(other.imageData, imageData));
   }
 
   @override
@@ -166,7 +185,8 @@ class _$_ProductDetailModel implements _ProductDetailModel {
       runtimeType,
       const DeepCollectionEquality().hash(productId),
       const DeepCollectionEquality().hash(snapshot),
-      const DeepCollectionEquality().hash(file));
+      const DeepCollectionEquality().hash(file),
+      const DeepCollectionEquality().hash(imageData));
 
   @JsonKey(ignore: true)
   @override
@@ -178,7 +198,8 @@ abstract class _ProductDetailModel implements ProductDetailModel {
   factory _ProductDetailModel(
       {required String productId,
       AsyncValue<ProductDocumentSnapshot>? snapshot,
-      XFile? file}) = _$_ProductDetailModel;
+      XFile? file,
+      AsyncValue<Uint8List?>? imageData}) = _$_ProductDetailModel;
 
   @override
   String get productId;
@@ -186,6 +207,8 @@ abstract class _ProductDetailModel implements ProductDetailModel {
   AsyncValue<ProductDocumentSnapshot>? get snapshot;
   @override
   XFile? get file;
+  @override
+  AsyncValue<Uint8List?>? get imageData;
   @override
   @JsonKey(ignore: true)
   _$ProductDetailModelCopyWith<_ProductDetailModel> get copyWith =>

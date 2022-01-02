@@ -118,6 +118,7 @@ abstract class ProductDocumentReference
   Future<void> update({
     String name,
     int latestPrice,
+    String? imagePath,
   });
 
   Future<void> set(Product value);
@@ -164,10 +165,12 @@ class _$ProductDocumentReference
   Future<void> update({
     Object? name = _sentinel,
     Object? latestPrice = _sentinel,
+    Object? imagePath = _sentinel,
   }) async {
     final json = {
       if (name != _sentinel) "name": name as String,
       if (latestPrice != _sentinel) "latestPrice": latestPrice as int,
+      if (imagePath != _sentinel) "imagePath": imagePath as String?,
     };
 
     return reference.update(json);
@@ -238,6 +241,17 @@ abstract class ProductQuery implements QueryReference<ProductQuerySnapshot> {
     List<int>? whereIn,
     List<int>? whereNotIn,
   });
+  ProductQuery whereImagePath({
+    String? isEqualTo,
+    String? isNotEqualTo,
+    String? isLessThan,
+    String? isLessThanOrEqualTo,
+    String? isGreaterThan,
+    String? isGreaterThanOrEqualTo,
+    bool? isNull,
+    List<String?>? whereIn,
+    List<String?>? whereNotIn,
+  });
 
   ProductQuery orderByName({
     bool descending = false,
@@ -257,6 +271,18 @@ abstract class ProductQuery implements QueryReference<ProductQuerySnapshot> {
     int startAfter,
     int endAt,
     int endBefore,
+    ProductDocumentSnapshot? startAtDocument,
+    ProductDocumentSnapshot? endAtDocument,
+    ProductDocumentSnapshot? endBeforeDocument,
+    ProductDocumentSnapshot? startAfterDocument,
+  });
+
+  ProductQuery orderByImagePath({
+    bool descending = false,
+    String? startAt,
+    String? startAfter,
+    String? endAt,
+    String? endBefore,
     ProductDocumentSnapshot? startAtDocument,
     ProductDocumentSnapshot? endAtDocument,
     ProductDocumentSnapshot? endBeforeDocument,
@@ -381,6 +407,34 @@ class _$ProductQuery extends QueryReference<ProductQuerySnapshot>
     );
   }
 
+  ProductQuery whereImagePath({
+    String? isEqualTo,
+    String? isNotEqualTo,
+    String? isLessThan,
+    String? isLessThanOrEqualTo,
+    String? isGreaterThan,
+    String? isGreaterThanOrEqualTo,
+    bool? isNull,
+    List<String?>? whereIn,
+    List<String?>? whereNotIn,
+  }) {
+    return _$ProductQuery(
+      reference.where(
+        'imagePath',
+        isEqualTo: isEqualTo,
+        isNotEqualTo: isNotEqualTo,
+        isLessThan: isLessThan,
+        isLessThanOrEqualTo: isLessThanOrEqualTo,
+        isGreaterThan: isGreaterThan,
+        isGreaterThanOrEqualTo: isGreaterThanOrEqualTo,
+        isNull: isNull,
+        whereIn: whereIn,
+        whereNotIn: whereNotIn,
+      ),
+      _collection,
+    );
+  }
+
   ProductQuery orderByName({
     bool descending = false,
     Object? startAt = _sentinel,
@@ -435,6 +489,48 @@ class _$ProductQuery extends QueryReference<ProductQuerySnapshot>
     ProductDocumentSnapshot? startAfterDocument,
   }) {
     var query = reference.orderBy('latestPrice', descending: false);
+
+    if (startAtDocument != null) {
+      query = query.startAtDocument(startAtDocument.snapshot);
+    }
+    if (startAfterDocument != null) {
+      query = query.startAfterDocument(startAfterDocument.snapshot);
+    }
+    if (endAtDocument != null) {
+      query = query.endAtDocument(endAtDocument.snapshot);
+    }
+    if (endBeforeDocument != null) {
+      query = query.endBeforeDocument(endBeforeDocument.snapshot);
+    }
+
+    if (startAt != _sentinel) {
+      query = query.startAt([startAt]);
+    }
+    if (startAfter != _sentinel) {
+      query = query.startAfter([startAfter]);
+    }
+    if (endAt != _sentinel) {
+      query = query.endAt([endAt]);
+    }
+    if (endBefore != _sentinel) {
+      query = query.endBefore([endBefore]);
+    }
+
+    return _$ProductQuery(query, _collection);
+  }
+
+  ProductQuery orderByImagePath({
+    bool descending = false,
+    Object? startAt = _sentinel,
+    Object? startAfter = _sentinel,
+    Object? endAt = _sentinel,
+    Object? endBefore = _sentinel,
+    ProductDocumentSnapshot? startAtDocument,
+    ProductDocumentSnapshot? endAtDocument,
+    ProductDocumentSnapshot? endBeforeDocument,
+    ProductDocumentSnapshot? startAfterDocument,
+  }) {
+    var query = reference.orderBy('imagePath', descending: false);
 
     if (startAtDocument != null) {
       query = query.startAtDocument(startAtDocument.snapshot);
@@ -524,9 +620,11 @@ _$assertProduct(Product instance) {
 Product _$ProductFromJson(Map<String, dynamic> json) => Product(
       name: json['name'] as String,
       latestPrice: json['latestPrice'] as int,
+      imagePath: json['imagePath'] as String?,
     );
 
 Map<String, dynamic> _$ProductToJson(Product instance) => <String, dynamic>{
       'name': instance.name,
       'latestPrice': instance.latestPrice,
+      'imagePath': instance.imagePath,
     };
