@@ -14,7 +14,7 @@ class ProductDetailNotifier extends StateNotifier<ProductDetailModel> {
   }
 
   final String productId;
-  final StateNotifierProviderRef _ref;
+  final AutoDisposeRef _ref;
   final StorageRepository _storageRepository;
 
   Future<void> _fetch() async {
@@ -65,12 +65,13 @@ class ProductDetailNotifier extends StateNotifier<ProductDetailModel> {
   }
 }
 
-final notifier = StateNotifierProvider.family<ProductDetailNotifier,
-    ProductDetailModel, String>((ref, productId) {
+final notifier = StateNotifierProvider.autoDispose
+    .family<ProductDetailNotifier, ProductDetailModel, String>(
+        (ref, productId) {
   return ProductDetailNotifier(productId, ref);
 });
 
-final _fetchProvider = FutureProvider.family<ProductDocumentSnapshot, String>(
-    (ref, productId) async {
+final _fetchProvider = FutureProvider.autoDispose
+    .family<ProductDocumentSnapshot, String>((ref, productId) async {
   return productsRef.doc(productId).get();
 });
