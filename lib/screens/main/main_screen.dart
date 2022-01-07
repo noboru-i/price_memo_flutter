@@ -38,6 +38,16 @@ class MainScreen extends HookConsumerWidget {
           Text(
             'email: ${user?.email}',
           ),
+          // TODO: showing sample
+          FutureBuilder<IdTokenResult?>(
+            future: user?.getIdTokenResult(),
+            builder: (_, snapshot) {
+              if (snapshot.hasData) {
+                return Text('claim ${snapshot.data?.claims?['groupIds']}');
+              }
+              return Container();
+            },
+          ),
           ElevatedButton(
             onPressed: () {
               FirebaseAuth.instance.signOut();
