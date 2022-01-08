@@ -32,7 +32,9 @@ class ImageView extends StatelessWidget {
     final localImageData = imageData;
     if (localImageData != null) {
       return localImageData.when(
-        data: (data) => data != null ? Image.memory(data) : const Text('error'),
+        data: (data) => data != null
+            ? Image.memory(data)
+            : const Center(child: Icon(Icons.image)),
         error: (_, __) => const Text('error'),
         loading: () => const MyLoading(),
       );

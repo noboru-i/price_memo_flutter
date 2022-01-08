@@ -66,3 +66,9 @@ Future<Uint8List> _compress(XFile file) async {
     height: isWidthLarger ? null : 640,
   )));
 }
+
+final downloadImageProvider =
+    FutureProvider.autoDispose.family<Uint8List?, String?>((ref, url) async {
+  final storageRepository = ref.read(storageRepositoryProvider);
+  return storageRepository.downloadImage(url);
+});

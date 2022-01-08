@@ -5,10 +5,12 @@ import 'package:cloud_firestore_odm/cloud_firestore_odm.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:price_memo/components/image_view.dart';
 import 'package:price_memo/components/loading.dart';
 import 'package:price_memo/models/product.model.dart';
 import 'package:price_memo/providers/auth_provider.dart';
 import 'package:price_memo/providers/provider.dart';
+import 'package:price_memo/providers/storage_provider.dart';
 
 class MainScreen extends HookConsumerWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -24,8 +26,7 @@ class MainScreen extends HookConsumerWidget {
     final groupId =
         (claims?.groupIds.length ?? 0) > 0 ? claims?.groupIds[0] : null;
     if (groupId == null) {
-      print('why groupId is null???');
-      return;
+      throw Exception('groupId is null in _addProduct');
     }
 
     // TODO: now, generating dummy date.
@@ -88,7 +89,6 @@ class _List extends HookConsumerWidget {
     final claims = ref.watch(customClaimProvider).value;
     final groupId =
         (claims?.groupIds.length ?? 0) > 0 ? claims?.groupIds[0] : null;
-    print('groupIds $groupId');
     if (groupId == null) {
       return const MyLoading();
     }
@@ -123,24 +123,29 @@ class _List extends HookConsumerWidget {
   }
 }
 
-class _ListItem extends StatelessWidget {
+class _ListItem extends HookConsumerWidget {
   const _ListItem(this.product, this.reference, {Key? key}) : super(key: key);
 
   final Product product;
   final ProductDocumentReference reference;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final imageData = ref.watch(downloadImageProvider(product.imagePath));
     return ListTile(
       title: Text(product.name),
       subtitle: Text('latest price: ${product.latestPrice}'),
-      onTap: () => context.beamToNamed('/products/${reference.id}'),
+      leading: SizedBox(
+        width: 64,
+        child: ImageView(null, imageData),
+      ),
       trailing: IconButton(
         icon: const Icon(Icons.delete),
         onPressed: () {
           productsRef.doc(reference.id).delete();
         },
       ),
+      onTap: () => context.beamToNamed('/products/${reference.id}'),
     );
   }
 }

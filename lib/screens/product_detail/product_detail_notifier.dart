@@ -27,7 +27,7 @@ class ProductDetailNotifier extends StateNotifier<ProductDetailModel> {
 
     final imagePath = snapshot.asData?.value.data?.imagePath;
     if (imagePath != null) {
-      final imageSnapshot = _ref.watch(_fetchImageProvider(imagePath));
+      final imageSnapshot = _ref.watch(downloadImageProvider(imagePath));
       state = state.copyWith(
         imageData: imageSnapshot,
       );
@@ -85,10 +85,4 @@ final notifier = StateNotifierProvider.autoDispose
 final _fetchProvider = FutureProvider.autoDispose
     .family<ProductDocumentSnapshot, String>((ref, productId) async {
   return productsRef.doc(productId).get();
-});
-
-final _fetchImageProvider =
-    FutureProvider.autoDispose.family<Uint8List?, String>((ref, url) async {
-  final storageRepository = ref.read(storageRepositoryProvider);
-  return storageRepository.downloadImage(url);
 });
