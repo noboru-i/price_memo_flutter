@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:price_memo/components/loading.dart';
 import 'package:price_memo/models/product.model.dart';
+import 'package:price_memo/providers/auth_provider.dart';
 import 'package:price_memo/providers/provider.dart';
 
 class MainScreen extends HookConsumerWidget {
@@ -15,22 +16,46 @@ class MainScreen extends HookConsumerWidget {
   Future<void> _addProduct(WidgetRef ref) async {
     var random = Random();
 
+    var user = ref.watch(authProvider).currentUser;
+    if (user == null) {
+      return;
+    }
+    final claims = ref.watch(customClaimProvider).value;
+    final groupId =
+        (claims?.groupIds.length ?? 0) > 0 ? claims?.groupIds[0] : null;
+    if (groupId == null) {
+      print('why groupId is null???');
+      return;
+    }
+
     // TODO: now, generating dummy date.
     var reference = ProductCollectionReference(ref.read(firestoreProvider));
     reference.add(
       Product(
         name: 'sample ' + random.nextInt(100).toString(),
         latestPrice: random.nextInt(50000),
+        groupId: groupId,
+        imagePath: '', // TODO: if null is set, security rule error.
       ),
     );
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var user = ref.watch(authProvider).currentUser;
+    final user = ref.watch(authProvider).currentUser;
+    final claims = ref.watch(customClaimProvider).value;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('product list'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.exit_to_app),
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+            },
+          ),
+        ],
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -38,22 +63,7 @@ class MainScreen extends HookConsumerWidget {
           Text(
             'email: ${user?.email}',
           ),
-          // TODO: showing sample
-          FutureBuilder<IdTokenResult?>(
-            future: user?.getIdTokenResult(),
-            builder: (_, snapshot) {
-              if (snapshot.hasData) {
-                return Text('claim ${snapshot.data?.claims?['groupIds']}');
-              }
-              return Container();
-            },
-          ),
-          ElevatedButton(
-            onPressed: () {
-              FirebaseAuth.instance.signOut();
-            },
-            child: const Text("Logout"),
-          ),
+          SelectableText('claims: ${claims?.groupIds}'),
           const Expanded(
             child: _List(),
           ),
@@ -70,13 +80,22 @@ class MainScreen extends HookConsumerWidget {
   }
 }
 
-class _List extends StatelessWidget {
+class _List extends HookConsumerWidget {
   const _List({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final claims = ref.watch(customClaimProvider).value;
+    final groupId =
+        (claims?.groupIds.length ?? 0) > 0 ? claims?.groupIds[0] : null;
+    print('groupIds $groupId');
+    if (groupId == null) {
+      return const MyLoading();
+    }
     return FirestoreBuilder<ProductQuerySnapshot>(
-      ref: productsRef.orderByName(descending: true),
+      ref: productsRef
+          .whereGroupId(isEqualTo: groupId)
+          .orderByName(descending: true),
       builder: (context, snapshot, _) {
         if (snapshot.hasError) {
           return Center(
@@ -116,6 +135,12 @@ class _ListItem extends StatelessWidget {
       title: Text(product.name),
       subtitle: Text('latest price: ${product.latestPrice}'),
       onTap: () => context.beamToNamed('/products/${reference.id}'),
+      trailing: IconButton(
+        icon: const Icon(Icons.delete),
+        onPressed: () {
+          productsRef.doc(reference.id).delete();
+        },
+      ),
     );
   }
 }

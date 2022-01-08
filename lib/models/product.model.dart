@@ -9,6 +9,7 @@ class Product {
   Product({
     required this.name,
     required this.latestPrice,
+    required this.groupId,
     this.imagePath,
   }) {
     _$assertProduct(this);
@@ -17,6 +18,7 @@ class Product {
   final String name;
   @Min(0)
   final int latestPrice;
+  final String groupId;
   final String? imagePath;
 }
 

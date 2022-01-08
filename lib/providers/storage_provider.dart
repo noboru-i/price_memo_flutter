@@ -41,7 +41,10 @@ class StorageRepository {
     }
   }
 
-  Future<Uint8List?> downloadImage(String url) async {
+  Future<Uint8List?> downloadImage(String? url) async {
+    if (url == null || url.isEmpty) {
+      return null;
+    }
     return _reader(storageProvider).ref(url).getData();
   }
 
