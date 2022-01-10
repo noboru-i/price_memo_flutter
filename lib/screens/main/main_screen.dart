@@ -36,7 +36,7 @@ class MainScreen extends HookConsumerWidget {
         name: 'sample ' + random.nextInt(100).toString(),
         latestPrice: random.nextInt(50000),
         groupId: groupId,
-        imagePath: '', // TODO: if null is set, security rule error.
+        imagePath: null,
       ),
     );
   }

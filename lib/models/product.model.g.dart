@@ -720,9 +720,19 @@ Product _$ProductFromJson(Map<String, dynamic> json) => Product(
       imagePath: json['imagePath'] as String?,
     );
 
-Map<String, dynamic> _$ProductToJson(Product instance) => <String, dynamic>{
-      'name': instance.name,
-      'latestPrice': instance.latestPrice,
-      'groupId': instance.groupId,
-      'imagePath': instance.imagePath,
-    };
+Map<String, dynamic> _$ProductToJson(Product instance) {
+  final val = <String, dynamic>{
+    'name': instance.name,
+    'latestPrice': instance.latestPrice,
+    'groupId': instance.groupId,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('imagePath', instance.imagePath);
+  return val;
+}

@@ -19,6 +19,7 @@ class Product {
   @Min(0)
   final int latestPrice;
   final String groupId;
+  @JsonKey(includeIfNull: false)
   final String? imagePath;
 }
 
