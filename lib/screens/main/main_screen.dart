@@ -30,7 +30,9 @@ class MainScreen extends HookConsumerWidget {
     }
 
     // TODO: now, generating dummy date.
-    var reference = ProductCollectionReference(ref.read(firestoreProvider));
+    var reference = GroupCollectionReference(ref.read(firestoreProvider))
+        .doc(groupId)
+        .products;
     reference.add(
       Product(
         name: 'sample ' + random.nextInt(100).toString(),
@@ -93,9 +95,7 @@ class _List extends HookConsumerWidget {
       return const MyLoading();
     }
     return FirestoreBuilder<ProductQuerySnapshot>(
-      ref: productsRef
-          .whereGroupId(isEqualTo: groupId)
-          .orderByName(descending: true),
+      ref: groupsRef.doc(groupId).products.orderByName(descending: true),
       builder: (context, snapshot, _) {
         if (snapshot.hasError) {
           return Center(
@@ -142,7 +142,10 @@ class _ListItem extends HookConsumerWidget {
       trailing: IconButton(
         icon: const Icon(Icons.delete),
         onPressed: () {
-          productsRef.doc(reference.id).delete();
+          final claims = ref.watch(customClaimProvider).value;
+          final groupId =
+              (claims?.groupIds.length ?? 0) > 0 ? claims?.groupIds[0] : null;
+          groupsRef.doc(groupId).products.doc(reference.id).delete();
         },
       ),
       onTap: () => context.beamToNamed('/products/${reference.id}'),

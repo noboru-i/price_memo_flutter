@@ -19,7 +19,7 @@ class _$ProductDetailModelTearOff {
 
   _ProductDetailModel call(
       {required String productId,
-      AsyncValue<ProductDocumentSnapshot>? snapshot,
+      ProductDocumentSnapshot? snapshot,
       XFile? file,
       AsyncValue<Uint8List?>? imageData}) {
     return _ProductDetailModel(
@@ -37,8 +37,7 @@ const $ProductDetailModel = _$ProductDetailModelTearOff();
 /// @nodoc
 mixin _$ProductDetailModel {
   String get productId => throw _privateConstructorUsedError;
-  AsyncValue<ProductDocumentSnapshot>? get snapshot =>
-      throw _privateConstructorUsedError;
+  ProductDocumentSnapshot? get snapshot => throw _privateConstructorUsedError;
   XFile? get file => throw _privateConstructorUsedError;
   AsyncValue<Uint8List?>? get imageData => throw _privateConstructorUsedError;
 
@@ -54,7 +53,7 @@ abstract class $ProductDetailModelCopyWith<$Res> {
       _$ProductDetailModelCopyWithImpl<$Res>;
   $Res call(
       {String productId,
-      AsyncValue<ProductDocumentSnapshot>? snapshot,
+      ProductDocumentSnapshot? snapshot,
       XFile? file,
       AsyncValue<Uint8List?>? imageData});
 }
@@ -83,7 +82,7 @@ class _$ProductDetailModelCopyWithImpl<$Res>
       snapshot: snapshot == freezed
           ? _value.snapshot
           : snapshot // ignore: cast_nullable_to_non_nullable
-              as AsyncValue<ProductDocumentSnapshot>?,
+              as ProductDocumentSnapshot?,
       file: file == freezed
           ? _value.file
           : file // ignore: cast_nullable_to_non_nullable
@@ -105,7 +104,7 @@ abstract class _$ProductDetailModelCopyWith<$Res>
   @override
   $Res call(
       {String productId,
-      AsyncValue<ProductDocumentSnapshot>? snapshot,
+      ProductDocumentSnapshot? snapshot,
       XFile? file,
       AsyncValue<Uint8List?>? imageData});
 }
@@ -136,7 +135,7 @@ class __$ProductDetailModelCopyWithImpl<$Res>
       snapshot: snapshot == freezed
           ? _value.snapshot
           : snapshot // ignore: cast_nullable_to_non_nullable
-              as AsyncValue<ProductDocumentSnapshot>?,
+              as ProductDocumentSnapshot?,
       file: file == freezed
           ? _value.file
           : file // ignore: cast_nullable_to_non_nullable
@@ -158,7 +157,7 @@ class _$_ProductDetailModel implements _ProductDetailModel {
   @override
   final String productId;
   @override
-  final AsyncValue<ProductDocumentSnapshot>? snapshot;
+  final ProductDocumentSnapshot? snapshot;
   @override
   final XFile? file;
   @override
@@ -197,14 +196,14 @@ class _$_ProductDetailModel implements _ProductDetailModel {
 abstract class _ProductDetailModel implements ProductDetailModel {
   factory _ProductDetailModel(
       {required String productId,
-      AsyncValue<ProductDocumentSnapshot>? snapshot,
+      ProductDocumentSnapshot? snapshot,
       XFile? file,
       AsyncValue<Uint8List?>? imageData}) = _$_ProductDetailModel;
 
   @override
   String get productId;
   @override
-  AsyncValue<ProductDocumentSnapshot>? get snapshot;
+  ProductDocumentSnapshot? get snapshot;
   @override
   XFile? get file;
   @override

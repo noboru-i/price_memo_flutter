@@ -5,6 +5,15 @@ import 'package:cloud_firestore_odm/cloud_firestore_odm.dart';
 part 'product.model.g.dart';
 
 @JsonSerializable()
+class Group {
+  Group({
+    required this.name,
+  });
+
+  final String name;
+}
+
+@JsonSerializable()
 class Product {
   Product({
     required this.name,
@@ -23,5 +32,6 @@ class Product {
   final String? imagePath;
 }
 
-@Collection<Product>('products')
-final productsRef = ProductCollectionReference();
+@Collection<Group>('groups')
+@Collection<Product>('groups/*/products')
+final groupsRef = GroupCollectionReference();

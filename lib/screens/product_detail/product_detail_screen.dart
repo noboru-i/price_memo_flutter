@@ -5,18 +5,27 @@ import 'package:image_picker/image_picker.dart';
 import 'package:price_memo/components/image_view.dart';
 import 'package:price_memo/components/loading.dart';
 import 'package:price_memo/models/product.model.dart';
+import 'package:price_memo/screens/product_detail/product_detail_model.dart';
 import 'package:price_memo/screens/product_detail/product_detail_notifier.dart';
 
-class ProductDetailScreen extends StatelessWidget {
+class ProductDetailScreen extends HookConsumerWidget {
   const ProductDetailScreen(this.productId, {Key? key}) : super(key: key);
 
   final String productId;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('product detail'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              ref.read(notifier(productId).notifier).reload();
+            },
+            icon: const Icon(Icons.refresh),
+          ),
+        ],
       ),
       body: _Body(productId),
     );
@@ -31,15 +40,11 @@ class _Body extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(notifier(productId));
-    final snapshot = state.snapshot;
-    if (snapshot == null) {
-      return const MyLoading();
-    }
-    return snapshot.when(
-      data: (ProductDocumentSnapshot data) {
-        final product = data.data;
-        final reference = data.reference;
-        if (product == null) {
+    return state.when(
+      data: (ProductDetailModel model) {
+        final product = model.snapshot?.data;
+        final reference = model.snapshot?.reference;
+        if (product == null || reference == null) {
           return const Text('error');
         }
 
@@ -83,7 +88,11 @@ class _DetailEditor extends HookConsumerWidget {
     final productNameController = useTextEditingController(text: product.name);
     final latestPriceController =
         useTextEditingController(text: '${product.latestPrice}');
-    final state = ref.watch(notifier(productId));
+
+    final file = ref
+        .watch(notifier(productId).select((value) => value.asData?.value.file));
+    final imageData = ref.watch(
+        notifier(productId).select((value) => value.asData?.value.imageData));
     final _notifier = ref.watch(notifier(productId).notifier);
 
     return Form(
@@ -132,7 +141,7 @@ class _DetailEditor extends HookConsumerWidget {
               SizedBox(
                 width: 120,
                 height: 120,
-                child: ImageView(state.file, state.imageData),
+                child: ImageView(file, imageData),
               ),
               const SizedBox(width: 8),
               Expanded(

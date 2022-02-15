@@ -11,7 +11,7 @@ part 'product_detail_model.freezed.dart';
 abstract class ProductDetailModel with _$ProductDetailModel {
   factory ProductDetailModel({
     required String productId,
-    AsyncValue<ProductDocumentSnapshot>? snapshot,
+    ProductDocumentSnapshot? snapshot,
     XFile? file,
     AsyncValue<Uint8List?>? imageData,
   }) = _ProductDetailModel;
