@@ -34,3 +34,15 @@ analyzer:
     - "**/*.freezed.dart"
   errors:
     invalid_annotation_target: ignore
+  plugins:
+    - import_lint
+
+import_lint:
+  rules:
+    sample:
+      target_file_path: "/**/providers/*.dart"
+      not_allow_imports: [ # TODO: dummy
+        "/**/models/**/*.dart",
+        "/**/models/*.dart"
+      ]
+      exclude_imports: []
