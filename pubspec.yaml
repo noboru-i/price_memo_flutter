@@ -41,6 +41,7 @@ dev_dependencies:
   json_serializable: ^6.1.3
   freezed: ^1.1.0
   monarch: any
+  import_lint: ^0.7.0
 
 flutter:
 
