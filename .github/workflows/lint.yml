@@ -8,7 +8,8 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          cache: true
       - run: flutter --version
       - run: flutter pub get
-      - run: flutter analyze
+      # - run: flutter analyze
       - run: flutter pub run import_lint
